@@ -1,0 +1,22 @@
+/* src/assets/scss/main.scss */
+@use 'sass:color';
+
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import './animate.css';
+@import './flex-slider.scss';
+@import './fontawesome.scss';
+@import './owl.css';
+@import './templatemo-liberty-market.css';
+@import './inter.css';
+@import './clash-grotesk.css';
+
+@import './reset';
+@import './variables';
+@import './functions';
+@import './utilities/border';
+@import './utilities/displayPosition';
+@import './utilities/spacing';
+@import './utilities/other';
+@import './global';
+@import './components';

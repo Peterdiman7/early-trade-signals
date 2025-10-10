@@ -176,6 +176,7 @@ const marketNews = ref([
     backdrop-filter: blur(20px);
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10rem;
 }
 
 .glass-header h1 {

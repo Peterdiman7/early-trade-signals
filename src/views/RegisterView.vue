@@ -1,27 +1,29 @@
 <template>
-    <div class="login-page">
-        <div class="login-card">
-            <h1>Login</h1>
-            <form @submit.prevent="login">
+    <div class="register-page">
+        <div class="register-card">
+            <h1>Register</h1>
+            <form @submit.prevent="register">
                 <div class="form-group">
                     <label style="color: black;">Username</label>
                     <input type="text" v-model="username" required />
                 </div>
                 <div class="form-group">
+                    <label style="color: black;">Email</label>
+                    <input type="email" v-model="email" required />
+                </div>
+                <div class="form-group">
                     <label style="color: black;">Password</label>
                     <input type="password" v-model="password" required />
                 </div>
-                <button class="btn" type="submit">Login</button>
+                <button class="btn" type="submit">Register</button>
             </form>
-
-            <!-- Error and success messages -->
-            <p v-if="error" class="error">{{ error }}</p>
             <p v-if="success" class="success">{{ success }}</p>
+            <p v-if="error" class="error">{{ error }}</p>
 
-            <!-- Registration link -->
-            <p class="register-link">
-                No account?
-                <router-link to="/register">Register here</router-link>
+            <!-- Login link -->
+            <p class="login-link">
+                Already have an account?
+                <router-link to="/login">Login here</router-link>
             </p>
         </div>
     </div>
@@ -33,23 +35,27 @@ import { useRouter } from "vue-router"
 import { useAuthStore } from "@/stores/auth"
 
 const username = ref("")
+const email = ref("")
 const password = ref("")
 const error = ref("")
 const success = ref("")
 const router = useRouter()
 const authStore = useAuthStore()
 
-const login = async () => {
+const register = async () => {
     error.value = ""
     success.value = ""
 
     try {
-        const response = await fetch("https://back.early-trade-signals.com/auth/login", {
+        const response = await fetch("https://back.amore-chapters.com/auth/register", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include", // important to send/receive cookies
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include", // important if backend sets cookies
             body: JSON.stringify({
                 username: username.value,
+                email: email.value,
                 password: password.value
             })
         })
@@ -57,17 +63,23 @@ const login = async () => {
         const data = await response.json()
 
         if (!response.ok) {
-            error.value = data.error || "Login failed"
+            error.value = data.error || "Registration failed"
             return
         }
 
-        success.value = data.message || "Login successful"
+        success.value = data.message || "Registered successfully!"
 
-        await authStore.checkLogin()
+        // If your backend automatically logs in after registration, update the auth store
+        // Otherwise, just redirect to login
 
+        // Option 1: If backend auto-logs in after registration
+        // await authStore.checkLogin()
+        // router.push("/")
+
+        // Option 2: Redirect to login page (current behavior)
         setTimeout(() => {
-            router.push("/")
-        }, 1000)
+            router.push("/login")
+        }, 1500)
     } catch (err) {
         error.value = "Network error"
     }
@@ -75,7 +87,7 @@ const login = async () => {
 </script>
 
 <style scoped>
-.login-page {
+.register-page {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,7 +95,7 @@ const login = async () => {
     background: #f9fafb;
 }
 
-.login-card {
+.register-card {
     background: white;
     padding: 2rem;
     border-radius: 12px;
@@ -121,30 +133,30 @@ input {
     background-color: #0f766e;
 }
 
-.error {
-    color: red;
-    margin-top: 1rem;
-}
-
 .success {
     color: green;
     margin-top: 1rem;
 }
 
-.register-link {
+.error {
+    color: red;
+    margin-top: 1rem;
+}
+
+.login-link {
     margin-top: 1rem;
     font-size: 0.9rem;
     color: #555;
     text-align: center;
 }
 
-.register-link a {
+.login-link a {
     color: #14b8a6;
     font-weight: bold;
     text-decoration: none;
 }
 
-.register-link a:hover {
+.login-link a:hover {
     text-decoration: underline;
 }
 </style>

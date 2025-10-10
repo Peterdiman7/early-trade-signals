@@ -1,162 +1,145 @@
 <template>
-  <header class="header">
+  <header class="header-area header-sticky">
     <div class="container">
-      <RouterLink to="/" class="logo">
-        <span class="icon">💹</span>
-        TradeWave
-      </RouterLink>
-
-      <nav class="nav">
-        <RouterLink to="/" class="nav-link">Home</RouterLink>
-        <RouterLink to="/signals" class="nav-link">Signals</RouterLink>
-        <RouterLink to="/market-analysis" class="nav-link">Market Analysis</RouterLink>
-        <RouterLink to="/pricing" class="nav-link">Pricing</RouterLink>
-        <RouterLink to="/community" class="nav-link">Community</RouterLink>
-        <RouterLink to="/login" class="nav-link login-btn">Sign In</RouterLink>
-      </nav>
-
-      <button class="mobile-menu-btn" @click="toggleMobileMenu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <div class="mobile-menu" :class="{ active: isMobileMenuOpen }">
-        <RouterLink to="/" class="mobile-nav-link" @click="closeMobileMenu">Home</RouterLink>
-        <RouterLink to="/signals" class="mobile-nav-link" @click="closeMobileMenu">Signals</RouterLink>
-        <RouterLink to="/market-analysis" class="mobile-nav-link" @click="closeMobileMenu">Market Analysis</RouterLink>
-        <RouterLink to="/pricing" class="mobile-nav-link" @click="closeMobileMenu">Pricing</RouterLink>
-        <RouterLink to="/community" class="mobile-nav-link" @click="closeMobileMenu">Community</RouterLink>
-        <RouterLink to="/login" class="mobile-nav-link login-btn" @click="closeMobileMenu">Sign In</RouterLink>
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <RouterLink to="/" class="logo">
+              <img src="@/assets/images/logo.png" alt="Logo" />
+            </RouterLink>
+            <ul class="nav" :class="{ active: menuOpen }" :style="menuOpen ? 'display: flex !important; opacity: 1 !important; visibility: visible !important;' : ''">
+              <li>
+                <RouterLink to="/" :class="{ active: isActive('/') }" @click="closeMenu">Home</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/signals" :class="{ active: isActive('/signals') }" @click="closeMenu">Signals</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/market-analysis" :class="{ active: isActive('/market-analysis') }" @click="closeMenu">Market Analysis</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/pricing" :class="{ active: isActive('/pricing') }" @click="closeMenu">Pricing</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/community" :class="{ active: isActive('/community') }" @click="closeMenu">Community</RouterLink>
+              </li>
+              <li v-if="!loggedIn">
+                <RouterLink to="/login" :class="{ active: isActive('/login') }" @click="closeMenu">Login</RouterLink>
+              </li>
+              <li v-else>
+                <RouterLink to="#" class="logout-link" @click.prevent="handleLogout">
+                  <span class="link-icon">🚪</span> Logout
+                </RouterLink>
+              </li>
+            </ul>
+            <a class="menu-trigger" :class="{ active: menuOpen }" @click.prevent="toggleMenu">
+              <span>Menu</span>
+            </a>
+          </nav>
+        </div>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 
-const isMobileMenuOpen = ref(false)
+const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+const { loggedIn } = storeToRefs(auth)
 
-function toggleMobileMenu() {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value
+const menuOpen = ref(false)
+
+// Function to check if the current route matches the given path
+const isActive = (path) => route.path === path
+
+// Toggle mobile menu
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
 }
 
-function closeMobileMenu() {
-  isMobileMenuOpen.value = false
+// Close mobile menu
+const closeMenu = () => {
+  menuOpen.value = false
 }
+
+const logout = async () => {
+  await auth.logout()
+  router.push("/login")
+}
+
+// Handle logout with menu close
+const handleLogout = async () => {
+  closeMenu()
+  await logout()
+}
+
+onMounted(() => {
+  auth.checkLogin()
+})
 </script>
 
 <style scoped>
-.header {
-  background: linear-gradient(135deg, #1b5e20, #43a047);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+/* Mobile menu styles */
+@media (max-width: 991px) {
+  .main-nav .nav {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 25px;
+    box-shadow: 0 5px 25px rgba(116, 83, 252, 0.15);
+    flex-direction: column !important;
+    padding: 20px !important;
+    margin: 0 20px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+    z-index: 998;
+    width: 95%;
+  }
+
+  .main-nav .nav.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(-50px) !important;
+    display: flex !important;
+  }
+
+  .main-nav .nav li {
+    width: 100%;
+    padding: 5px 0 !important;
+    display: block;
+  }
+
+  .main-nav .nav li a {
+    width: 100%;
+    text-align: left;
+  }
+
+  .main-nav .menu-trigger {
+    display: block !important;
+  }
+
+  .logout-link {
+    cursor: pointer;
+  }
+
+  .link-icon {
+    margin-right: 5px;
+  }
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 70px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-}
-
-.icon {
-  font-size: 1.2rem;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.nav-link {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.nav-link:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.login-btn {
-  background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-.login-btn:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-.mobile-menu-btn {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.mobile-menu-btn span {
-  width: 25px;
-  height: 3px;
-  background: white;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.mobile-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #1b5e20, #43a047);
-  flex-direction: column;
-  padding: 1rem 2rem;
-}
-
-.mobile-menu.active {
-  display: flex;
-}
-
-.mobile-nav-link {
-  color: white;
-  text-decoration: none;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-weight: 500;
-}
-
-.mobile-nav-link:last-child {
-  border-bottom: none;
-}
-
-@media (max-width: 768px) {
-  .nav { display: none; }
-  .mobile-menu-btn { display: flex; }
-  .container { padding: 0 1rem; }
+@media (min-width: 1272px) {
+  .main-nav .menu-trigger {
+    display: none !important;
+  }
 }
 </style>

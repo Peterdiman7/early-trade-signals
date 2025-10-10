@@ -1,7 +1,7 @@
 <template>
 <div class="app-wrapper">
     <AppHeader />
-    <main class="page-layout">
+    <main>
         <RouterView />
     </main>
     <AppFooter />

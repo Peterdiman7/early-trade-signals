@@ -97,6 +97,20 @@ const billingCycle = ref('monthly')
 const pricingPlans = ref([
     {
         id: 1,
+        name: 'Basic',
+        description: 'Entry-level access for casual traders',
+        priceMonthly: 9,
+        priceAnnual: 89,
+        features: [
+            '3 signals per day',
+            'Basic chart insights',
+            'Community forum access'
+        ],
+        buttonText: 'Try Now',
+        featured: false
+    },
+    {
+        id: 2,
         name: 'Starter',
         description: 'Perfect for beginners exploring trading signals',
         priceMonthly: 29,
@@ -112,7 +126,7 @@ const pricingPlans = ref([
         featured: false
     },
     {
-        id: 2,
+        id: 3,
         name: 'Pro',
         description: 'For serious traders who need advanced tools',
         priceMonthly: 79,
@@ -131,7 +145,7 @@ const pricingPlans = ref([
         featured: true
     },
     {
-        id: 3,
+        id: 4,
         name: 'Enterprise',
         description: 'Custom solutions for professional teams',
         priceMonthly: 199,
@@ -147,6 +161,24 @@ const pricingPlans = ref([
             'Priority signal delivery'
         ],
         buttonText: 'Contact Sales',
+        featured: false
+    },
+    {
+        id: 5,
+        name: 'Ultimate',
+        description: 'All-in-one solution for institutions and hedge funds',
+        priceMonthly: 499,
+        priceAnnual: 4799,
+        features: [
+            'Everything in Enterprise',
+            'Institutional-grade analytics',
+            'Unlimited team members',
+            '24/7 dedicated support',
+            'On-site consulting',
+            'Custom AI-driven strategies',
+            'Private community access'
+        ],
+        buttonText: 'Request Demo',
         featured: false
     }
 ])
@@ -217,6 +249,7 @@ function toggleFaq(id) {
     backdrop-filter: blur(20px);
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10rem;
 }
 
 .glass-header h1 {
@@ -292,7 +325,22 @@ function toggleFaq(id) {
 
 .pricing-card {
     position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* ensures spacing */
+    height: 100%; /* makes all cards equal height in grid */
+}
+
+.plan-features {
+    flex-grow: 1; /* pushes the button down */
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.plan-btn {
+    margin-top: auto; /* ensures button stays at bottom */
 }
 
 .pricing-card:hover {
@@ -358,13 +406,6 @@ function toggleFaq(id) {
     font-size: 1rem;
 }
 
-.plan-features {
-    margin: 2rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
 .feature-item {
     display: flex;
     align-items: center;
@@ -397,6 +438,7 @@ function toggleFaq(id) {
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    margin-top: auto;
 }
 
 .plan-btn:hover {
